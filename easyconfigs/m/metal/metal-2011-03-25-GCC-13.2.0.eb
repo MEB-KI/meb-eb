@@ -1,0 +1,31 @@
+easyblock = 'MakeCp'
+
+name = 'metal'
+version = '2011-03-25'
+
+homepage = 'http://csg.sph.umich.edu/abecasis/Metal/'
+description = """Metal - Meta Analysis Helper. The METAL software is designed to facilitate meta-analysis of large
+ datasets (such as several whole genome scans) in a convenient, rapid and memory efficient manner."""
+
+toolchain = {'name': 'GCC', 'version': '13.2.0'}
+
+source_urls = ['http://csg.sph.umich.edu/abecasis/Metal/download/']
+sources = ['generic-metal-%(version)s.tar.gz']
+checksums = ['c301456c85a613980c522b47ef2669b81c3afd426bd5a52ac0f5a90e180460ae']
+
+prebuildopts = 'sed -i "s/ -static/ -std=c++11 $CXXFLAGS/" Makefile &&'
+
+buildopts = 'all'
+
+files_to_copy = [(['executables/metal'], 'bin')]
+
+sanity_check_paths = {
+    'files': ['bin/metal'],
+    'dirs': [],
+}
+
+sanity_check_commands = [
+    'metal <<< QUIT'
+]
+
+moduleclass = 'bio'
