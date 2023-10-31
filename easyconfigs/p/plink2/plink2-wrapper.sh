@@ -25,7 +25,7 @@ else
 fi
 
 default_args=( "--memory" "--threads" )
-default_values=( "8000" "8" )
+default_values=( "8000" "1" )
 
 # do not substitute arguments if running the --help command
 # or running with no options
