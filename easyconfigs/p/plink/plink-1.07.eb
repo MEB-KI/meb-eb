@@ -1,0 +1,29 @@
+easyblock = 'PackedBinary'
+
+name = 'plink'
+version = '1.07'
+
+homepage = 'http://zzz.bwh.harvard.edu/plink/'
+description = """PLINK is a free, open-source whole genome association analysis toolset,
+designed to perform a range of basic, large-scale analyses in a computationally
+efficient manner."""
+
+toolchain = SYSTEM
+
+source_urls = ['https://s3.amazonaws.com/plink1-assets/1.07/']
+sources = [{
+    'filename': 'plink1_linux_x86_64.zip',
+    'extract_cmd': 'unzip -qq -j %s'
+}]
+
+sanity_check_paths = {
+	'files': ['plink'],
+	'dirs': [],
+}
+
+sanity_check_commands = [
+    'plink --noweb --help'
+]
+
+moduleclass = 'bio'
+
