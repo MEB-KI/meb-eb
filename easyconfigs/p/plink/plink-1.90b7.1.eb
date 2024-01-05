@@ -1,7 +1,7 @@
 easyblock = 'PackedBinary'
 
 name = 'plink'
-version = '1.90b7.1'
+version = '1.90b7.2'
 
 homepage = 'https://www.cog-genomics.org/plink/1.9/'
 description = """PLINK is a free, open-source whole genome association analysis toolset,
@@ -12,7 +12,7 @@ toolchain = SYSTEM
 
 source_urls = ['https://s3.amazonaws.com/plink1-assets/']
 sources = [{
-    'filename': 'plink_linux_x86_64_20231018.zip',
+    'filename': 'plink_linux_x86_64_20231211.zip',
     'extract_cmd': 'unzip -qq %s && mv plink plink.bin'
 }]
 

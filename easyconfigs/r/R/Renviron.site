@@ -1,0 +1,5 @@
+# MEB Renviron.site
+
+R_LIBS_USER="${HOME}/.R/library/%V"
+TMP="${HOME}"
+OMP_NUM_THREADS=1
