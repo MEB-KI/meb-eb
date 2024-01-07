@@ -1,0 +1,30 @@
+easyblock = "Tarball"
+
+name = 'snptest'
+version = '2.5.6'
+
+homepage = 'https://www.chg.ox.ac.uk/~gav/snptest/'
+description = """SNPTEST is a program for the analysis of single SNP association in genome-wide studies."""
+
+toolchain = SYSTEM
+
+source_urls = ['http://www.well.ox.ac.uk/~gav/resources/']
+sources = ['snptest_v%(version)s_CentOS_Linux7.8-x86_64_dynamic.tgz']
+
+# this makes sure the software folder is added to $PATH
+modextrapaths = {'PATH': ''}
+
+postinstallcmds = [
+    'cd %(installdir)s && ln -s snptest_v%(version)s snptest'
+]
+
+sanity_check_paths = {
+    'files': ["snptest_v%(version)s"],
+    'dirs': []
+}
+
+sanity_check_commands = [
+    'snptest -help'
+]
+
+moduleclass = 'bio'
