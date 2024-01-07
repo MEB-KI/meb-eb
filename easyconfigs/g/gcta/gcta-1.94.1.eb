@@ -1,0 +1,30 @@
+easyblock = "PackedBinary"
+
+name = 'gcta'
+version = '1.94.1'
+
+homepage = 'https://yanglab.westlake.edu.cn/software/gcta/'
+description = """GCTA (Genome-wide Complex Trait Analysis) is a software package
+initially developed to estimate the proportion of phenotypic variance explained
+by all genome-wide SNPs for a complex trait but has been greatly extended for
+many other analyses of data from genome-wide association studies (GWASs)."""
+
+toolchain = SYSTEM
+
+source_urls = ['https://yanglab.westlake.edu.cn/software/gcta/bin/']
+sources = ['gcta-%(version)s-linux-kernel-3-x86_64.zip']
+
+postinstallcmds = [
+    'cd %(installdir)s && ln -s gcta-%(version)s gcta64'
+]
+
+sanity_check_paths = {
+    'files': ["gcta-%(version)s"],
+    'dirs': []
+}
+
+sanity_check_commands = [
+    'gcta64 --bfile test --out gcta_test > /dev/null && rm -f gcta_test.log'
+]
+
+moduleclass = 'bio'
