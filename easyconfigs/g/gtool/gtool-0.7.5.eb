@@ -1,0 +1,27 @@
+easyblock = "Tarball"
+
+name = 'gtool'
+version = '0.7.5'
+
+homepage = 'https://www.chg.ox.ac.uk/~cfreeman/software/gwas/gtool.html'
+description = """GTOOL is a program for transforming sets of genotype data for use with 
+the programs SNPTEST and IMPUTE."""
+
+toolchain = SYSTEM
+
+source_urls = ['http://www.chg.ox.ac.uk/~cfreeman/software/gwas/']
+sources = ['gtool_v%(version)s_x86_64.tgz']
+
+# this makes sure the software folder is added to $PATH
+modextrapaths = {'PATH': ''}
+
+sanity_check_paths = {
+    'files': ["gtool"],
+    'dirs': []
+}
+
+sanity_check_commands = [
+    'gtool -P --ped example/example.ped --map example/example.map --og test.gen --os test.sample >/dev/null && rm test.{gen,sample} gtool.log'
+]
+
+moduleclass = 'bio'
