@@ -1,0 +1,8 @@
+--- metro/src/ShotgunStochasticSearch.cpp
++++ metro/src/ShotgunStochasticSearch.cpp
+@@ -6,4 +6,5 @@
+ 
+ #include <vector>
++#include <cstdint>
+ #include "metro/ShotgunStochasticSearch.hpp"
+ 
