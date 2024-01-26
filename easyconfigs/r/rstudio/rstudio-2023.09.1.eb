@@ -1,0 +1,54 @@
+easyblock = "Tarball"
+
+name = 'rstudio'
+version = '2023.09.1'
+
+homepage = 'https://posit.co/products/open-source/rstudio/'
+description = """RStudio is an integrated development environment (IDE) for R and Python.
+
+It includes a console, syntax-highlighting editor that supports direct code
+execution, and tools for plotting, history, debugging, and workspace management.
+
+This is the DESKTOP version of RStudio, and requires a local X server to run."""
+
+toolchain = SYSTEM
+
+source_urls = ['https://s3.amazonaws.com/rstudio-ide-build/electron/rhel9/x86_64/']
+sources = ['rstudio-2023.09.1-494-x86_64-fedora.tar.gz']
+
+# set some default options (don't look for updates, don't save or load workspace,
+# don't try to run UI on GPU) - although it seems only the rstudio-prefs.json
+# options are actually applied (and not the config.json)
+patches = [
+    ('rstudio-tensor-config.patch', 1)
+]
+
+# really don't try to run on GPU, and load custom prefs
+modextravars = {
+    'RSTUDIO_CHROMIUM_ARGUMENTS': '--disable-gpu',
+    'RSTUDIO_CONFIG_DIR': '%(installdir)s/config'
+}
+
+# this makes sure the software folder is added to $PATH
+modextrapaths = {'PATH': ''}
+
+# we don't hardcode an R version dependency, but instead load the
+# lmod default R if no R is loaded
+modluafooter = """
+depends_on("R")
+"""
+
+dependencies = [
+    ('PostgreSQL', '16.1', '', ('GCCcore', '13.2.0'))
+]
+
+sanity_check_paths = {
+    'files': ["rstudio"],
+    'dirs': []
+}
+
+sanity_check_commands = [
+    'rstudio --help'
+]
+
+moduleclass = 'lang'

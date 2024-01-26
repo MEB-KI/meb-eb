@@ -1,0 +1,22 @@
+diff --git a/config/config.json b/config/config.json
+new file mode 100644
+index 0000000..932ea54
+--- /dev/null
++++ b/config/config.json
+@@ -0,0 +1,5 @@
++{
++    "renderer": {
++        "engine": "software"
++    }
++}
+diff --git a/config/rstudio-prefs.json b/config/rstudio-prefs.json
+new file mode 100644
+index 0000000..7a3b55e
+--- /dev/null
++++ b/config/rstudio-prefs.json
+@@ -0,0 +1,5 @@
++{
++    "save_workspace": "never",
++    "load_workspace": false,
++    "check_for_updates": false
++}
