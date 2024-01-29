@@ -1,0 +1,45 @@
+easyblock = 'MakeCp'
+
+name = 'EIGENSOFT'
+version = '8.0.0'
+
+homepage = 'https://www.hsph.harvard.edu/alkes-price/software/'
+description = """The EIGENSOFT package combines functionality from our population genetics methods (Patterson et al.
+2006)  and our EIGENSTRAT stratification correction method (Price et al. 2006). The EIGENSTRAT method uses principal
+components  analysis to explicitly model ancestry differences between cases and controls along continuous axes of
+variation;  the resulting correction is specific to a candidate marker’s variation in frequency across ancestral
+populations,  minimizing spurious associations while maximizing power to detect true associations. The EIGENSOFT
+package has a built-in plotting script and supports multiple file formats and quantitative phenotypes."""
+
+toolchain = {'name': 'gfbf', 'version': '2023b'}
+
+source_urls = ['https://github.com/DReichLab/EIG/archive']
+sources = ['v%(version)s.tar.gz']
+patches = [
+    '%(name)s-%(version)s_Fix_makefile_openblas.patch',
+]
+checksums = [
+    'e3459e8ac0134da369910454854eae5c7b261e8816318ccbd2d371b4c6c35741',  # v8.0.0.tar.gz
+    '968a320537dda55083670e68184bdc93caf5079d7f500e31e765ec2966ce39d3',  # EIGENSOFT-8.0.0_Fix_makefile_openblas.patch
+]
+
+dependencies = [
+    ('GSL', '2.7'),
+    ('Perl', '5.38.0'),
+]
+
+start_dir = 'src'
+
+# Run "make install" after make to copy all binaries to the bin dir
+buildopts = 'LDLIBS="-lgsl $LIBBLAS -llapacke $LIBS" && make install'
+
+files_to_copy = ['bin', 'CONVERTF', 'EIGENSTRAT', 'POPGEN', 'README']
+
+fix_perl_shebang_for = ['bin/*.perl', 'bin/ploteig']
+
+sanity_check_paths = {
+    'files': ['bin/%s' % x for x in ["baseprog", "convertf", "eigenstrat", "eigenstratQTL"]],
+    'dirs': []
+}
+
+moduleclass = 'bio'
