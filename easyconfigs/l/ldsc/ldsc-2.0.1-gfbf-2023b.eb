@@ -1,0 +1,48 @@
+easyblock = 'PythonBundle'
+
+name = 'ldsc'
+version = '2.0.1'
+
+homepage = 'https://github.com/bulik/ldsc'
+description = """ldsc is a command line tool for estimating heritability and genetic
+correlation from GWAS summary statistics. ldsc also computes LD Scores."""
+
+toolchain = {'name': 'gfbf', 'version': '2023b'}
+
+builddependencies = [
+]
+
+dependencies = [
+    ('Python', '3.11.5'),
+    ('SciPy-bundle', '2023.11'),
+    ('bedtools', '2.31.1')
+]
+
+download_dep_fail = True
+use_pip = True
+sanity_pip_check = False
+runtest = True
+
+sanity_check_paths = {
+    'files': ['bin/ldsc.py'],
+    'dirs': [],
+}
+
+sanity_check_commands = [
+    "ldsc.py --help",
+    "munge_sumstats.py --help",
+]
+
+exts_list = [
+    ('pynose', '1.4.8', {
+        'modulename': 'nose',
+    }),
+    ('pybedtools', '0.9.1'),
+    ('pysam', '0.22.0'),
+    (name, version, {
+        'modulename': 'ldscore',
+        'checksums': ['fe72f99da8a26414d82e47f2d2ee7cebbbab6c20d1b4ea51a0c38cc650c63556'],
+    }),
+]
+
+moduleclass = 'bio'
