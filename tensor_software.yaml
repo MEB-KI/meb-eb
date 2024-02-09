@@ -1,0 +1,48 @@
+# This files lists all EasyBuild recipes intentionally installed on the
+# MEB tensor compute cluster (not including dependencies), and can be used to
+# reinstall the collection in a fresh folder.
+#
+# The collection is based on the recipes included with EasyBuild 4.9,
+# with local additions from the meb-eb repository
+# (https://github.com/robkar/meb-eb, local copy in /nfs/sw/eb/meb-eb)
+#
+# As of EasyBuild 4.9, the syntax to use it is
+# eb --experimental --easystack tensor_software.yaml
+easyconfigs:
+  # main toolchain, based on GCC 13.2.0
+  - gfbf-2023b.eb
+
+  # additional packages
+  
+  # statistics
+  - R-4.3.2-gfbf-2023b.eb:
+      options:
+        # to avoid accidental system-wide package installations by sw group members
+        read-only-installdir: True
+  - rstudio-2023.09.1.eb:
+      options:
+        # not sure if needed, but why not
+        read-only-installdir: True
+  
+  # genetics
+  - gtool-0.7.5.eb
+  - qctool-2.2.0-GCC-13.2.0.eb
+  - snptest-2.5.6.eb
+  - gcta-1.94.1.eb
+  - plink-1.07.eb
+  - plink-1.90b7.1.eb
+  - plink2-2.00a5.10.eb
+  - metal-2011-03-25-GCC-13.2.0.eb
+  - metal-2020-05-05-GCC-13.2.0.eb
+  - EIGENSOFT-8.0.0-gfbf-2023b.eb
+  - bedtools-2.31.1-GCC-13.2.0.eb
+  - htslib-1.19.1-GCC-13.2.0.eb
+  - bcftools-1.19-GCC-13.2.0.eb
+  - samtools-1.19.2-GCC-13.2.0.eb
+  - ldsc-2.0.1-gfbf-2023b.eb
+  
+  # general tools
+  - ncdu-1.19-GCCcore-13.2.0.eb
+  - tmux-3.3a-GCCcore-13.2.0.eb
+  - rclone-1.65.2.eb
+  - parallel-20240122-GCCcore-13.2.0.eb
