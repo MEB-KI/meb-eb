@@ -13,7 +13,7 @@ easyconfigs:
   - gfbf-2023b.eb
 
   # additional packages
-  
+
   # statistics
   - R-4.3.2-gfbf-2023b.eb:
       options:
@@ -40,6 +40,7 @@ easyconfigs:
   - bcftools-1.19-GCC-13.2.0.eb
   - samtools-1.19.2-GCC-13.2.0.eb
   - ldsc-2.0.1-gfbf-2023b.eb
+  - gtc2vcf-2023-12-06-GCC-13.2.0.eb
   
   # general tools
   - ncdu-1.19-GCCcore-13.2.0.eb
