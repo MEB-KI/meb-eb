@@ -48,3 +48,4 @@ easyconfigs:
   - rclone-1.65.2.eb
   - parallel-20240122-GCCcore-13.2.0.eb
   - nextflow-23.10.1.eb
+  - lftp-4.9.2-GCCcore-13.2.0.eb
