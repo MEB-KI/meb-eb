@@ -8,7 +8,10 @@ set -eu
 KEYTAB="$HOME/.kt"
 
 # if running interactively, restore echo if interrupted while entering password
-trap 'tty -s && stty echo' EXIT
+trap "tty -s && stty echo" EXIT
+# if interrupted with Ctrl-C (typically when asked to enter password), exit
+# instead of trying again
+trap "exit 1" INT
 
 get_ticket() {
 	kinit $USER@MEB.KI.SE -k -t "$KEYTAB" 2>/dev/null
@@ -22,6 +25,15 @@ create_keytab() {
     	echo "q"
 	} | ktutil >/dev/null
 }
+
+# Try to not run more than one k5start in the same session by saving the PID in
+# /tmp (which is unique for each slurm job), and checking if it is still
+# running.
+K5S_PID="/tmp/k5start.$UID.pid"
+if [ -f "$K5S_PID" ] && kill -0 $(cat "$K5S_PID") 2>/dev/null; then
+	echo "Already authenticated - k5start running with PID $(cat "$K5S_PID")." >&2
+	exit
+fi
 
 # check for existing keytab - if it exists and is valid, we are done,
 # otherwise remove it and make a new one
@@ -64,12 +76,5 @@ if [ ! -f "$KEYTAB" ]; then
 fi
 
 # At this point, we should have a valid keytab - run k5start (but exit on any error)
-#
-# Try to not start more than one in the same session by saving the PID in /tmp
-# (which is unique for each slurm job), and checking if it is still running.
-K5S_PID="/tmp/k5start.$UID.pid"
-if [ -f "$K5S_PID" ] && kill -0 $(cat "$K5S_PID") 2>/dev/null; then
-	echo "k5start already running with PID $(cat "$K5S_PID")." >&2
-	exit
-fi
+
 k5start -U -f "$KEYTAB" -K 10 -x -p "$K5S_PID" -b
