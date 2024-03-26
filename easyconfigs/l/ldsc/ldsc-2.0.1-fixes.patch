@@ -1,0 +1,17 @@
+--- munge_sumstats.py	2024-03-26 13:46:49.000000000 +0100
++++ munge_sumstats.py	2022-10-12 16:22:30.000000000 +0200
+@@ -154,12 +154,12 @@
+     '''
+     if fh.endswith('gz'):
+         compression = 'gzip'
++        openfunc = lambda fn: gzip.open(fn, 'rt')
+-        openfunc = gzip.open
+     elif fh.endswith('bz2'):
+         compression = 'bz2'
+         openfunc = bz2.BZ2File
+     else:
++        openfunc = lambda fn: open(fn, 'r')
+-        openfunc = open
+         compression = None
+ 
+     return openfunc, compression

@@ -42,6 +42,7 @@ exts_list = [
     (name, version, {
         'modulename': 'ldscore',
         'checksums': ['fe72f99da8a26414d82e47f2d2ee7cebbbab6c20d1b4ea51a0c38cc650c63556'],
+        'patches': ['ldsc-2.0.1-fixes.patch'],
     }),
 ]
 
