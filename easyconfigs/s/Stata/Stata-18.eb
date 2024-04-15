@@ -1,0 +1,45 @@
+name = 'Stata'
+version = '18'
+
+homepage = 'https://www.stata.com/'
+description = """Stata is a complete, integrated statistical software package that provides everything you need
+ for data analysis, data management, and graphics."""
+
+toolchain = SYSTEM
+
+# Requires license to access source files
+# See also https://www.stata.com/support/faqs/unix/install-download-on-linux/
+# You can download the source tarball from: https://download.stata.com/download/
+# Once the installation with EB completes, you **must** generate the licence file
+# by executing the script "stinit" from the root of the installation directory.
+
+sources = ['Stata%(version)sLinux64.tar.gz']
+checksums = [
+    # the source tarball of Stata seems to change over time without any version change
+    # so far, these 3 checksum have been reported
+    ('f3062aa0abde8cf1bc8436f7a37941e7d25e0093116933e41d39c3ba91c97c2c'),
+]
+
+dependencies = [
+    ('ncurses', '6.4', '', ('GCCcore', '13.2.0')),
+    ('zlib', '1.2.13', '', ('GCCcore', '13.2.0')),
+]
+
+# Optional: requirements for xstata
+osdependencies = [('xorg', 'xorg-x11', 'xorg-x11-apps', 'xorg-x11-server-Xorg')]
+
+# Bindings
+modextrapaths = {
+    'PYTHONPATH': ['utilities'],
+    'CLASSPATH': ['utilities/jar'],
+}
+
+# Stata system profile
+local_stata_sysprofile = """
+set odbcmgr unixodbc
+"""
+postinstallcmds = ['echo "%s" > %%(installdir)s/sysprofile.do' % local_stata_sysprofile]
+
+sanity_check_commands = ['stata -h']
+
+moduleclass = 'data'

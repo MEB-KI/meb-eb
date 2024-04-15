@@ -23,6 +23,7 @@ easyconfigs:
       options:
         # not sure if needed, but why not
         read-only-installdir: True
+  - Stata-18.eb
   
   # genetics
   - gtool-0.7.5.eb
