@@ -57,7 +57,8 @@ dependencies = [
     ('HarfBuzz', '8.2.2'),  # for textshaping
     ('FriBidi', '1.0.13'),  # for textshaping
     ('Pango', '1.51.0'), # for using cairo graphics by default
-
+    ('unixODBC', '2.3.12'), # for obdc connections
+    
 ]
 
 # Some R extensions (mclust, quantreg, waveslim for example) require the math library (-lm) to avoid undefined symbols.
