@@ -1,0 +1,215 @@
+diff --git a/src/library/parallel/NAMESPACE b/src/library/parallel/NAMESPACE
+index 556472d..f820645 100644
+--- a/src/library/parallel/NAMESPACE
++++ b/src/library/parallel/NAMESPACE
+@@ -9,7 +9,7 @@ if(tools:::.OStype() == "unix") {
+ 
+ export(closeNode, clusterApply, clusterApplyLB, clusterCall,
+        clusterEvalQ, clusterExport, clusterMap, clusterSplit,
+-       detectCores, getDefaultCluster, makeCluster,
++       detectCores, .detectCores, getDefaultCluster, makeCluster,
+        makeForkCluster, makePSOCKcluster, mcMap, mclapply,
+        mcmapply, parApply, parCapply, parLapply, parLapplyLB,
+        parRapply, parSapply, parSapplyLB, pvec, recvData,
+diff --git a/src/library/parallel/R/detectCores.R b/src/library/parallel/R/detectCores.R
+index 4899441..dc378a6 100644
+--- a/src/library/parallel/R/detectCores.R
++++ b/src/library/parallel/R/detectCores.R
+@@ -18,7 +18,37 @@
+ 
+ ## In part based on code in package multicore 0.1-6 by Simon Urbanek
+ 
+-detectCores <-
++# Original detectCores renamed to .detectCores and replaced with SLURM-aware
++# version for internal use on MEB compute servers
++# Robert Karlsson 2024-01-09
++
++detectCores <- function(all.tests = FALSE, logical = TRUE) {
++    # Determine number of available cores from the following
++    # sources in order:
++    #
++    # - if sbatch/srun is called with -c/--cpus-per-task,
++    #   SLURM_CPUS_PER_TASK is set
++    # - if sbatch/srun is called with -n/--ntasks,
++    #   SLURM_NTASKS is set
++    # - if sbatch/srun is called with neither -c nor -n, the
++    #   partition default (core = 2, fullnode = 96) is used,
++    #   and can be fetched from SLURM_CPUS_ON_NODE
++    slurm_vars <- as.integer(Sys.getenv(c(
++        "SLURM_CPUS_PER_TASK",
++        "SLURM_NTASKS",
++        "SLURM_CPUS_ON_NODE"), unset = NA))
++    slurm_available_cpus <- slurm_vars[!is.na(slurm_vars)][1]
++    if(!is.na(slurm_available_cpus)) {
++        slurm_available_cpus
++    } else {
++        # if SLURM environment variables are not present, assume we
++        # are running on a login node and shouldn't multithread
++        1L
++    }
++}
++
++
++.detectCores <-
+     if(.Platform$OS.type == "windows") {
+         function(all.tests = FALSE, logical = TRUE) {
+             ## result is # cores, logical processors.
+diff --git a/src/library/parallel/man/detectCores.Rd b/src/library/parallel/man/detectCores.Rd
+index 8dff878..5c3b3a9 100644
+--- a/src/library/parallel/man/detectCores.Rd
++++ b/src/library/parallel/man/detectCores.Rd
+@@ -7,60 +7,41 @@
+ \alias{detectCores}
+ \title{Detect the Number of CPU Cores}
+ \description{
+-  Attempt to detect the number of CPU cores on the current host.
++  Attempt to detect the number of CPU cores on the current host (MEB-local
++  SLURM-aware version).
+ }
+ \usage{
+ detectCores(all.tests = FALSE, logical = TRUE)
+ }
+ \arguments{
+-  \item{all.tests}{Logical: if true apply all known tests.}
+-  \item{logical}{Logical: if possible, use the number of physical CPUs/cores
+-    (if \code{FALSE}) or logical CPUs (if \code{TRUE}).  Currently this
+-    is honoured only on macOS, Solaris and Windows.}
++  \item{all.tests}{Ignored.}
++  \item{logical}{Ignored.}
+ }
+ \details{
+-  This attempts to detect the number of available CPU cores.
+-
+-  It has methods to do so for Linux, macOS, FreeBSD, \I{OpenBSD}, Solaris
+-  and Windows.  \code{detectCores(TRUE)} could be tried on other
+-  Unix-alike systems.
++  This attempts to detect the number of available CPU cores using SLURM
++  environment variables. It is intended for use on MEB compute servers.
++  For the original version of this function distributed with R, see
++  \code{\link{.detectCores}}.
+ }
+ \value{
+-  An integer, \code{NA} if the answer is unknown.
+-
+-  Exactly what this represents is OS-dependent: where possible by
+-  default it counts logical (e.g., hyperthreaded) CPUs and not physical
+-  cores or packages.
+-
+-  Under macOS there is a further distinction between \sQuote{available in
+-    the current power management mode} and \sQuote{could be available
+-    this boot}, and this function returns the first.
++  An integer, derived as follows:
+ 
+-  On \I{Sparc} Solaris \code{logical = FALSE} returns the number of physical
+-  cores and \code{logical = TRUE} returns the number of available
+-  hardware threads. (Some \I{Sparc} CPUs have multiple cores per CPU, others
+-  have multiple threads per core and some have both.)  For example, the
+-  \I{UltraSparc} T2 CPU in the former CRAN check server was a single
+-  physical CPU with 8 cores, and each core supports 8 hardware threads.
+-  So \code{detectCores(logical = FALSE)} returns 8, and
+-  \code{detectCores(logical = TRUE)} returns 64.
+-
+-  Where virtual machines are in use, one would hope that the result
+-  for \code{logical = TRUE} represents the number of CPUs available (or
+-  potentially available) to that particular \abbr{VM}.
++  \itemize{
++    \item if sbatch/srun is called with -c/--cpus-per-task,
++      SLURM_CPUS_PER_TASK is used
++    \item otherwise, if sbatch/srun is called with -n/--ntasks,
++      SLURM_NTASKS is used
++    \item if sbatch/srun is called with neither -c nor -n, the
++      partition default (core = 2, fullnode = 96) is used,
++      and is read from SLURM_CPUS_ON_NODE
++    \item if none of the above environment variables are available,
++      assume we are running on a login node and shouldn't use more
++      than one core
++  }
+ }
+ \author{
+-  Simon Urbanek and Brian Ripley
+-}
+-\note{
+-  This is not suitable for use directly for the \code{mc.cores} argument
+-  of \code{mclapply} nor specifying the number of cores in
+-  \code{makeCluster}.  First because it may return \code{NA}, second
+-  because it does not give the number of \emph{allowed} cores, and third
+-  because on \I{Sparc} Solaris and some Windows boxes it is not reasonable
+-  to try to use all the logical CPUs at once.
++  Robert Karlsson
+ }
+ \examples{
+ detectCores()
+-detectCores(logical = FALSE)
+ }
+diff --git a/src/library/parallel/man/dot-detectCores.Rd b/src/library/parallel/man/dot-detectCores.Rd
+new file mode 100644
+index 0000000..930110c
+--- /dev/null
++++ b/src/library/parallel/man/dot-detectCores.Rd
+@@ -0,0 +1,66 @@
++% File src/library/parallel/man/detectCores.Rd
++% Part of the R package, https://www.R-project.org
++% Copyright 2011-2020 R Core Team
++% Distributed under GPL 2 or later
++
++\name{.detectCores}
++\alias{.detectCores}
++\title{Detect the Number of CPU Cores}
++\description{
++  Attempt to detect the number of CPU cores on the current host.
++}
++\usage{
++.detectCores(all.tests = FALSE, logical = TRUE)
++}
++\arguments{
++  \item{all.tests}{Logical: if true apply all known tests.}
++  \item{logical}{Logical: if possible, use the number of physical CPUs/cores
++    (if \code{FALSE}) or logical CPUs (if \code{TRUE}).  Currently this
++    is honoured only on macOS, Solaris and Windows.}
++}
++\details{
++  This attempts to detect the number of available CPU cores.
++
++  It has methods to do so for Linux, macOS, FreeBSD, \I{OpenBSD}, Solaris
++  and Windows.  \code{.detectCores(TRUE)} could be tried on other
++  Unix-alike systems.
++}
++\value{
++  An integer, \code{NA} if the answer is unknown.
++
++  Exactly what this represents is OS-dependent: where possible by
++  default it counts logical (e.g., hyperthreaded) CPUs and not physical
++  cores or packages.
++
++  Under macOS there is a further distinction between \sQuote{available in
++    the current power management mode} and \sQuote{could be available
++    this boot}, and this function returns the first.
++
++  On \I{Sparc} Solaris \code{logical = FALSE} returns the number of physical
++  cores and \code{logical = TRUE} returns the number of available
++  hardware threads. (Some \I{Sparc} CPUs have multiple cores per CPU, others
++  have multiple threads per core and some have both.)  For example, the
++  \I{UltraSparc} T2 CPU in the former CRAN check server was a single
++  physical CPU with 8 cores, and each core supports 8 hardware threads.
++  So \code{.detectCores(logical = FALSE)} returns 8, and
++  \code{.detectCores(logical = TRUE)} returns 64.
++
++  Where virtual machines are in use, one would hope that the result
++  for \code{logical = TRUE} represents the number of CPUs available (or
++  potentially available) to that particular \abbr{VM}.
++}
++\author{
++  Simon Urbanek and Brian Ripley
++}
++\note{
++  This is not suitable for use directly for the \code{mc.cores} argument
++  of \code{mclapply} nor specifying the number of cores in
++  \code{makeCluster}.  First because it may return \code{NA}, second
++  because it does not give the number of \emph{allowed} cores, and third
++  because on \I{Sparc} Solaris and some Windows boxes it is not reasonable
++  to try to use all the logical CPUs at once.
++}
++\examples{
++.detectCores()
++.detectCores(logical = FALSE)
++}

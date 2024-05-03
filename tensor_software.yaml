@@ -19,6 +19,9 @@ easyconfigs:
       options:
         # to avoid accidental system-wide package installations by sw group members
         read-only-installdir: True
+  - R-4.4.0-gfbf-2023b.eb:
+      options:
+        read-only-installdir: True
   - rstudio-2023.09.1.eb:
       options:
         # not sure if needed, but why not

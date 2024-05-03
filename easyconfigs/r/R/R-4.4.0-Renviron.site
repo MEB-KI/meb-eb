@@ -1,0 +1,3 @@
+# MEB Renviron.site
+
+R_LIBS_USER="${HOME}/.R/library/%V"
