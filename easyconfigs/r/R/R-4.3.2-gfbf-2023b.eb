@@ -24,6 +24,12 @@ modaliases = {
     'R': 'R --no-save --no-restore-data'
 }
 
+# set OMP_NUM_THREADS to 1 by default IN THE MODULE FILE
+# (it seems to be too late for FlexiBLAS to set it in Renviron.site)
+modextravars = {
+    'OMP_NUM_THREADS': '1'
+}
+
 postinstallcmds = [
     'mv %(builddir)s/%(name)s-%(version)s/etc/Rprofile.site %(installdir)s/lib64/R/etc/',
     'mv %(builddir)s/%(name)s-%(version)s/etc/Renviron.site %(installdir)s/lib64/R/etc/'
