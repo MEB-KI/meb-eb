@@ -48,4 +48,9 @@ postinstallcmds = ['echo "%s" > %%(installdir)s/sysprofile.do' % local_stata_sys
 
 sanity_check_commands = ['stata -h']
 
+modluafooter = """
+-- create ~/.local/share if it doesn't exist, or xstata gives warnings
+execute{cmd = "if [ ! -d ~/.local/share ]; then mkdir -p ~/.local/share; fi", modeA = {"load"}}
+"""
+
 moduleclass = 'data'
