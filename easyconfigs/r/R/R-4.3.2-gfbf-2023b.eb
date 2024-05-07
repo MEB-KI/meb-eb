@@ -64,6 +64,7 @@ dependencies = [
     ('FriBidi', '1.0.13'),  # for textshaping
     ('Pango', '1.51.0'), # for using cairo graphics by default
     ('unixODBC', '2.3.12'), # for obdc connections
+    ('pandoc', '3.1.13', '', SYSTEM),
     
 ]
 
