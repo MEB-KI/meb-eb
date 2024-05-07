@@ -37,6 +37,12 @@ modextrapaths = {
 # Stata system profile
 local_stata_sysprofile = """
 set odbcmgr unixodbc
+
+// avoid ~ in ado paths as it does not expand automatically in python
+local HOME: env HOME
+sysdir set PLUS "`HOME'/ado/plus/"
+sysdir set PERSONAL "`HOME'/ado/personal/"
+sysdir set OLDPLACE "`HOME'/ado/"
 """
 postinstallcmds = ['echo "%s" > %%(installdir)s/sysprofile.do' % local_stata_sysprofile]
 
