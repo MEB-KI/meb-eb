@@ -4,7 +4,7 @@
 #
 # The collection is based on the recipes included with EasyBuild 4.9,
 # with local additions from the meb-eb repository
-# (https://github.com/robkar/meb-eb, local copy in /nfs/sw/eb/meb-eb)
+# (https://github.com/MEB-KI/meb-eb, local copy in /nfs/sw/eb/meb-eb)
 #
 # As of EasyBuild 4.9, the syntax to use it is
 # eb --experimental --easystack tensor_software.yaml
@@ -45,6 +45,7 @@ easyconfigs:
   - samtools-1.19.2-GCC-13.2.0.eb
   - ldsc-2.0.1-gfbf-2023b.eb
   - gtc2vcf-2023-12-06-GCC-13.2.0.eb
+  - regenie-3.4.1.eb
   
   # general tools
   - ncdu-1.19-GCCcore-13.2.0.eb

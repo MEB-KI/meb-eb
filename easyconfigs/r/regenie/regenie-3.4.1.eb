@@ -1,0 +1,33 @@
+easyblock = 'PackedBinary'
+
+name = "regenie"
+version = "3.4.1"
+
+homepage = "https://rgcgithub.github.io/regenie/"
+description = """regenie is a C++ program for whole genome regression modelling
+of large genome-wide association studies."""
+
+toolchain = SYSTEM
+
+github_account = "rgcgithub"
+
+source_urls = ['https://github.com/%(github_account)s/%(namelower)s/releases/download/v%(version)s/']
+# Using Centos7 version with MKL as RHEL 9 is still on glibc 2.34 and the 
+# distributed standard binaries need 2.35 or higher
+sources = ['%(namelower)s_v%(version)s.gz_x86_64_Centos7_mkl.zip']
+
+dependencies = [
+]
+
+postinstallcmds = ['cd %(installdir)s && ln -s %(namelower)s_v%(version)s.gz_x86_64_Centos7_mkl regenie']
+
+sanity_check_paths = {
+    'files': ['regenie'],
+    'dirs': []
+}
+
+sanity_check_commands = [
+    'regenie --help'
+]
+
+moduleclass = 'bio'
