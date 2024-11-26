@@ -1,0 +1,236 @@
+diff --git a/rp_bin/Ricopili/Utils.pm b/rp_bin/Ricopili/Utils.pm
+index b1d99ab..9ae19af 100755
+--- a/rp_bin/Ricopili/Utils.pm
++++ b/rp_bin/Ricopili/Utils.pm
+@@ -9,6 +9,19 @@ BEGIN {
+     our @EXPORT_OK   = qw(trans $conf_file);
+ }
+ 
++#############################
++# parse options for debug flag while leaving @ARGV
++# unaltered for the main script being called
++###############################
++use Getopt::Long;
++Getopt::Long::Configure('pass_through');
++my @tmp_opts = @ARGV;
++Getopt::Long::GetOptionsFromArray(
++    \@tmp_opts,
++    "debug"=> \my $debug,
++);
++Getopt::Long::Configure('no_pass_through');
++
+ #############################
+ # read config file
+ #############################
+@@ -51,10 +64,10 @@ while (my $line = <FILE>){
+     my $tmp_env = $cells[1];
+     if ($tmp_env =~ /^ENV\{/){
+ 	$tmp_env =~ s/^ENV\{//;
+-	$tmp_env =~ s/\}$//;
++	$tmp_env =~ s/\}.*$//;
+ 	if (defined $ENV{$tmp_env}) {
+-	    $cells[1]=$ENV{$tmp_env};
+-	    print "replacing $tmp_env with $cells[1] in $conf_file\n";
++	    $cells[1] =~ s/ENV\{$tmp_env\}/$ENV{$tmp_env}/;
++	    print "replacing $tmp_env with $ENV{$tmp_env} in $conf_file\n" if ($debug);
+ 	}
+ 	else {
+ 	    print "environment variable $tmp_env in $conf_file is not defined\n";
+diff --git a/rp_bin/impute_dirsub b/rp_bin/impute_dirsub
+index 443200e..cb399a5 100755
+--- a/rp_bin/impute_dirsub
++++ b/rp_bin/impute_dirsub
+@@ -3780,10 +3780,22 @@ if ($impdeploy_done == 0) {
+ 			exit;
+ 		    }
+ 		}
++		
++		# check for vcf index files (csi or tbi)
++		unless (-e "$vcf_file.csi" || -e "$vcf_file.tbi") {
++			print "------------------------------------------------------------------------------------------------------------\n";
++			print "Error: $vcf_file index (csi or tbi) not found\n";
++			print "Please copy from imputation server output or generate in $subdir_in with \"tabix -p vcf\"\n";
++			print "------------------------------------------------------------------------------------------------------------\n";
++			exit;
++		}
++		
+ 		my $keep_txt = "";
+ 		$keep_txt = "--keepvcf" if ($noclean);
+ 		
+-		my $sys_loc = "$vcf2dos_script --legend $legend_file --vcf $vcf_file --refstart $refstart --refend $refend --chr $refchr --outname $outname";
++		# Add --gp4 (GP in 4th position of FORMAT) to work with Sanger imputation 
++		# server output as of Jan 2020 (not sure how long it has been necessary)
++		my $sys_loc = "$vcf2dos_script --gp4 --legend $legend_file --vcf $vcf_file --refstart $refstart --refend $refend --chr $refchr --outname $outname";
+ 		#		    print "$sys_loc\n";
+ 		#		    exit;
+ 		
+diff --git a/rp_bin/my.prepdep b/rp_bin/my.prepdep
+index ee76d79..9775408 100755
+--- a/rp_bin/my.prepdep
++++ b/rp_bin/my.prepdep
+@@ -97,7 +97,7 @@ my $sc = 0;
+ 
+ 
+ #/psych/ripke/share/gio/Ricopili_Dependencies_sr_1118b/plink/plink --vcf pop_euro_eur_SEQ.det.vcf --a2-allele pop_euro_eur_SEQ.det.bim.exc.det 2 1  --recode vcf --real-ref-alleles --out pop_euro_eur_SEQ.det.vcf.refalleles --double-id
+-my $sys = "$p2loc"."/plink --silent --bed $bfile.bed --bim $bfile.bim --fam $famfile  --a2-allele $legendfile 3 1 --recode vcf --real-ref-alleles --out $outdir/$bfile.dep.tmp";
++my $sys = "$p2loc"."/plink --silent --bed $bfile.bed --bim $bfile.bim --fam $famfile  --a2-allele $legendfile 3 1 --recode vcf --real-ref-alleles --output-chr MT --out $outdir/$bfile.dep.tmp";
+ print "$sys\n" if ($debug);
+ unless ($mockmode == 1) {
+     system ("echo $sys > $bfile.dep.log");
+@@ -112,8 +112,10 @@ if ($sc != 0){
+ 
+ 
+ ## for michigan server
++# RK - comment out to work with chrX on sanger
++if (0) {
+ foreach my $chr (1..22) {
+-    my $sys = "$p2loc"."/plink --silent --chr $chr --bed $bfile.bed --bim $bfile.bim --fam $famfile  --a2-allele $legendfile 3 1 --recode vcf --real-ref-alleles --out $outdir/$bfile.chr$chr";
++    my $sys = "$p2loc"."/plink --silent --chr $chr --bed $bfile.bed --bim $bfile.bim --fam $famfile  --a2-allele $legendfile 3 1 --recode vcf --real-ref-alleles --output-chr MT --out $outdir/$bfile.chr$chr";
+     print "$sys\n"  if ($debug);
+ #    unless ($debug) {
+ 	$sc =system ($sys);
+@@ -123,7 +125,7 @@ foreach my $chr (1..22) {
+ 	exit;
+     }
+ }
+-
++}
+ #exit;
+ 
+ 
+@@ -192,7 +194,8 @@ if ($cells[0] != 1) {
+ close IN;
+ 
+ 
+-
++# RK don't do this because it breaks Sanger/chrX processing
++if (0) {
+ 
+ #######################################
+ ### split vcf into 22 chromosomes
+@@ -224,7 +227,7 @@ foreach my $chr (1..22) {
+     $sc =system ($sys);
+ }
+ 
+-
++} # end RK
+ 
+ 
+ 
+diff --git a/rp_bin/my.wget b/rp_bin/my.wget
+index 1a40a12..921e319 100755
+--- a/rp_bin/my.wget
++++ b/rp_bin/my.wget
+@@ -15,7 +15,7 @@ if (@ARGV != 2) {
+ 
+ 
+ # only header from first file (and check success)
+-my $sc =system ("wget -n $ftp_name/$vcf_name");
++my $sc =system ("wget -nv $ftp_name/$vcf_name");
+ if ($sc != 0){
+     print "systemcode: $sc\n";
+     exit;
+diff --git a/rp_bin/pca_plot_5 b/rp_bin/pca_plot_5
+index 4de54c8..393e064 100755
+--- a/rp_bin/pca_plot_5
++++ b/rp_bin/pca_plot_5
+@@ -515,7 +515,8 @@ close L2;
+ 
+ my $R_templ = '
+ 
+-read.table ("MDSFILE",header=T)->pca
++# added "stringsAsFactors = TRUE" so this works with the new defaults in R 4.0 - RK
++read.table ("MDSFILE",header=T, stringsAsFactors = TRUE)->pca
+ read.table ("LEGENDFILE1",header=F,sep ="\t")->le1
+ read.table ("LEGENDFILE2",header=F,sep ="\t")->le2
+ 
+diff --git a/rp_bin/plothist2 b/rp_bin/plothist2
+index ac0b93c..a782e28 100755
+--- a/rp_bin/plothist2
++++ b/rp_bin/plothist2
+@@ -240,7 +240,7 @@ breaks_n = breaks_n * (range / range_plot);
+ #print (range)
+ #print (range_plot)
+ #print (breaks_n)
+-if (breaks_n < 10) {
++if (is.na(breaks_n) || breaks_n < 10) {
+   breaks_n = 10
+ }
+ 
+diff --git a/rp_bin/postimp_navi b/rp_bin/postimp_navi
+index 86add4a..81ad784 100755
+--- a/rp_bin/postimp_navi
++++ b/rp_bin/postimp_navi
+@@ -4058,7 +4058,8 @@ unless (-e $areator_regplot) {
+     print "will do regioner\n" if ($debug);
+     my @pth_arr = qw /5.0e-08 1.0e-06 1.0e-05 1.0e-04 1.0e-03 1.0e-02 1.0e-01/;
+     foreach my $pth_loc (@pth_arr) {
+-	my $sys_str = "$comp1mhcreg_script --out $areator_all --pth $pth_loc $areator_all";
++	# added $refdir to fix error from it being missing - RK
++	my $sys_str = "$comp1mhcreg_script --out $areator_all --pth $pth_loc $areator_all --refdir $refdir";
+ 	print "$sys_str\n" if ($debug);
+ 	&mysystem ($sys_str);
+ 	$wc_loc = `wc -l $areator_regplot`;
+diff --git a/rp_bin/refdir_navi b/rp_bin/refdir_navi
+index efa4cba..a672a74 100755
+--- a/rp_bin/refdir_navi
++++ b/rp_bin/refdir_navi
+@@ -1146,7 +1146,7 @@ unless (-e "$sample_root") {
+     print "********************************\n";
+     print "--sample_root ($sample_root) not found, should I try to download at $vcf_site (y/n)?\n";
+ 
+-    my $sys = "wget -n $vcf_site/$sample_root ";
++    my $sys = "wget -nv $vcf_site/$sample_root ";
+ 
+     my $answer = lc <>;
+     chomp $answer;
+diff --git a/rp_bin/vcf2dos b/rp_bin/vcf2dos
+index 80ec490..44ccea7 100755
+--- a/rp_bin/vcf2dos
++++ b/rp_bin/vcf2dos
+@@ -15,6 +15,7 @@ use Ricopili::Utils qw(trans);
+ 
+ use lib $ENV{rp_perlpackages};
+ use Compress::Zlib ;
++use IO::Zlib;
+ #use Time;
+ 
+ 
+@@ -238,7 +239,18 @@ if ($legend_sw == 1) {
+ ## translate vcf file
+ ##############################################
+ 
+-my $igz = gzopen("$vcf_file", "rb")  or die "Cannot open file $vcf_file: $gzerrno\n" ;
++# check for vcf index file and use with tabix if present
++# if not, read entire file as before
++my $vcf_has_index = -e "$vcf_file.csi" || -e "$vcf_file.tbi";
++
++if ($vcf_has_index) {
++	my $tabix = trans("tabixloc") . "/tabix";
++	my $tabix_cmd = "$tabix -h $vcf_file $chr:$start_loc-$end_loc";
++	die $!."$tabix_cmd" unless open VCF, "-|", "$tabix_cmd";
++} else {
++	die $!."$vcf_file" unless tie *VCF, "IO::Zlib", "$vcf_file", "rb";
++}
++
+ my $ovgz = gzopen("$outvcf", "wb")  or die "Cannot open file $outvcf: $gzerrno\n" ;
+ my $odgz = gzopen("$outdos", "wb")  or die "Cannot open file $outdos: $gzerrno\n" ;
+ 
+@@ -251,7 +263,7 @@ die $!."$outmap" unless open MAP, "> $outmap";
+ print "translating $vcf_file into $outvcf and $outdos\n" if ($debug);
+ 
+ my $nwarnings=0;
+-while ($igz->gzreadline(my $line)){
++while (my $line = <VCF>){
+     chomp($line);
+     my @cells = @{&split_line_ref_tab(\$line)};
+     
+@@ -386,7 +398,7 @@ while ($igz->gzreadline(my $line)){
+     
+ }
+ 
+-$igz->gzclose();
++close VCF;
+ $ovgz->gzclose();
+ $odgz->gzclose();
+ close MAP;

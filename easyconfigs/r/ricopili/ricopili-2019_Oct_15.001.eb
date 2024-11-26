@@ -1,0 +1,77 @@
+easyblock = 'PackedBinary'
+
+name = "ricopili"
+version = "2019_Oct_15.001"
+
+homepage = "https://sites.google.com/a/broadinstitute.org/ricopili/"
+description = """RICOPILI stands for Rapid Imputation and COmputational PIpeLIne
+              for GWAS - It is developed and maintained by Stephan Ripke at the
+              Broad Institute and MGH."""
+
+toolchain = SYSTEM
+
+sources = [
+    {
+        'source_urls': ['https://docs.google.com/'],
+        'download_filename': 'uc?export=download&id=19OlLahJCoo03D1j4y5oyD-sdANVtSt4z',
+        'filename': 'Ricopili.2019_Oct_15.001.tar.gz'},
+    {
+        'source_urls': ['https://personal.broadinstitute.org/sripke/share_links/JeklRDhPD6FKm8Gnda7JsUOsMan2P2_Ricopili_Dependencies.1118b.tar.gz/'],
+        'filename': 'Ricopili_Dependencies.1118b.tar.gz',
+        'extract_cmd': 'mkdir -p Ricopili_Dependencies.1118b && tar -C Ricopili_Dependencies.1118b -xvzf %s'
+    },
+    {
+        'source_urls': ['https://ftp.1000genomes.ebi.ac.uk/vol1/ftp/technical/reference/'],
+        'filename': 'human_g1k_v37.fasta.gz',
+        'extract_cmd': 'mkdir -p Ricopili_Dependencies.1118b/bcftools/resources/ && gzip -cd < %s > Ricopili_Dependencies.1118b/bcftools/resources/human_g1k_v37.fasta || true'
+
+    },
+    ]
+
+patches = [
+    'ricopili-2019_Oct_15.001_misc_patches.patch',
+    ('ricopili.conf', '../')]
+
+checksums = [
+    {'Ricopili.2019_Oct_15.001.tar.gz': '9f131112d40e29c9aa52f7dfac49e37f7960f1875a0833d9f28fa364670fb837'},
+    {'Ricopili_Dependencies.1118b.tar.gz': '63c1fd5ff10e71963ebd79b7ac1b8da4c30649785dc8c6de99fb2fe1b44aafc4'},
+    {'human_g1k_v37.fasta.gz': '8b6c538abf0dd92d3f3020f36cc1dd67ce004ffa421c2781205f1eb690bdb442'},
+]
+
+install_cmd = "cp -Ru * %(installdir)s"
+
+dependencies = [
+    ('R-bundle-ricopili', '2019_Oct_15.001', '', ('gfbf', '2023b')),
+    ('ldsc', '2.0.1', '', ('gfbf', '2023b')),
+    ('plink', '1.90b7.2', '', SYSTEM),
+]
+
+sanity_check_paths = {
+    'files': ['rp_bin/preimp_dir'],
+    'dirs': ['rp_bin']
+}
+
+sanity_check_commands = [
+]
+
+modextrapaths = {
+    'PATH': ['rp_bin', 'rp_bin/pdfjam']
+}
+
+modextravars = {
+    'RPHOME': '%(installdir)s/',
+    'RPDEP': '%(installdir)s/Ricopili_Dependencies.1118b',
+    'rp_perlpackages': '%(installdir)s/Ricopili_Dependencies.1118b/perl_modules'
+}
+
+modluafooter = """
+-- create empty log files if they don't exist
+execute{cmd = "mkdir -p $HOME/ricopili_log && \
+    touch -a $HOME/ricopili_log/{preimp_dir,impute_dir,pcaer,idtager,repqc2,areator,clumper,merge_caller,postimp_navi,reference_dir,test}_info",
+    modeA = {"load"}}
+-- set initials variable from user database
+execute{cmd = "export RP_INITIALS=$(getent passwd $USER | cut -f5 -d: | awk '{print tolower(substr($1, 1, 1) substr($NF, 1, 1))}')",
+    modeA = {"load"}}
+"""
+
+moduleclass = 'bio'
