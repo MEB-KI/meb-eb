@@ -44,6 +44,7 @@ dependencies = [
     ('R-bundle-ricopili', '2019_Oct_15.001', '', ('gfbf', '2023b')),
     ('ldsc', '2.0.1', '', ('gfbf', '2023b')),
     ('plink', '1.90b7.2', '', SYSTEM),
+    ('texlive', '20240312', '', ('GCC', '13.2.0'))
 ]
 
 sanity_check_paths = {
