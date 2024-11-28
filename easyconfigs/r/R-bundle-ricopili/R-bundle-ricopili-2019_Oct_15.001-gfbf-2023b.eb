@@ -26,6 +26,7 @@ exts_default_options = {
 exts_list = [
     ('rmeta', '3.0'),
     ('MASS', '7.3-60.0.1'),
+    ('KernSmooth', '2.23-24'),
     ('lattice', '0.22-6'),
     ('Matrix', '1.6-5'),
     ('Rcpp', '1.0.13-1'),

@@ -26,6 +26,49 @@ sources = [
         'extract_cmd': 'mkdir -p Ricopili_Dependencies.1118b/bcftools/resources/ && gzip -cd < %s > Ricopili_Dependencies.1118b/bcftools/resources/human_g1k_v37.fasta || true'
 
     },
+    # 1000G reference files for PCA
+    {
+        'source_urls': ['https://personal.broadinstitute.org/sripke/share_links/rPsYfw9hxKmapSHawolwqZykKbR7qN_1KG_pops_ricopili_format/'],
+        'filename': 'Ricopili_Dependencies.1118b/1KG_pops_ricopili_format/pop_4pop_mix_SEQ.bed',
+        'download_filename': 'pop_4pop_mix_SEQ.bed',
+        'extract_cmd': 'mkdir -p Ricopili_Dependencies.1118b/1KG_pops_ricopili_format/ && cp %s Ricopili_Dependencies.1118b/1KG_pops_ricopili_format/'
+
+    },
+        {
+        'source_urls': ['https://personal.broadinstitute.org/sripke/share_links/rPsYfw9hxKmapSHawolwqZykKbR7qN_1KG_pops_ricopili_format/'],
+        'filename': 'Ricopili_Dependencies.1118b/1KG_pops_ricopili_format/pop_4pop_mix_SEQ.bim',
+        'download_filename': 'pop_4pop_mix_SEQ.bim',
+        'extract_cmd': 'mkdir -p Ricopili_Dependencies.1118b/1KG_pops_ricopili_format/ && cp %s Ricopili_Dependencies.1118b/1KG_pops_ricopili_format/'
+
+    },
+        {
+        'source_urls': ['https://personal.broadinstitute.org/sripke/share_links/rPsYfw9hxKmapSHawolwqZykKbR7qN_1KG_pops_ricopili_format/'],
+        'filename': 'Ricopili_Dependencies.1118b/1KG_pops_ricopili_format/pop_4pop_mix_SEQ.fam',
+        'download_filename': 'pop_4pop_mix_SEQ.fam',
+        'extract_cmd': 'mkdir -p Ricopili_Dependencies.1118b/1KG_pops_ricopili_format/ && cp %s Ricopili_Dependencies.1118b/1KG_pops_ricopili_format/'
+
+    },
+        {
+        'source_urls': ['https://personal.broadinstitute.org/sripke/share_links/rPsYfw9hxKmapSHawolwqZykKbR7qN_1KG_pops_ricopili_format/'],
+        'filename': 'Ricopili_Dependencies.1118b/1KG_pops_ricopili_format/pop_euro_eur_SEQ.det.bed',
+        'download_filename': 'pop_euro_eur_SEQ.det.bed',
+        'extract_cmd': 'mkdir -p Ricopili_Dependencies.1118b/1KG_pops_ricopili_format/ && cp %s Ricopili_Dependencies.1118b/1KG_pops_ricopili_format/'
+
+    },
+        {
+        'source_urls': ['https://personal.broadinstitute.org/sripke/share_links/rPsYfw9hxKmapSHawolwqZykKbR7qN_1KG_pops_ricopili_format/'],
+        'filename': 'Ricopili_Dependencies.1118b/1KG_pops_ricopili_format/pop_euro_eur_SEQ.det.bim',
+        'download_filename': 'pop_euro_eur_SEQ.det.bim',
+        'extract_cmd': 'mkdir -p Ricopili_Dependencies.1118b/1KG_pops_ricopili_format/ && cp %s Ricopili_Dependencies.1118b/1KG_pops_ricopili_format/'
+
+    },
+        {
+        'source_urls': ['https://personal.broadinstitute.org/sripke/share_links/rPsYfw9hxKmapSHawolwqZykKbR7qN_1KG_pops_ricopili_format/'],
+        'filename': 'Ricopili_Dependencies.1118b/1KG_pops_ricopili_format/pop_euro_eur_SEQ.det.fam',
+        'download_filename': 'pop_euro_eur_SEQ.det.fam',
+        'extract_cmd': 'mkdir -p Ricopili_Dependencies.1118b/1KG_pops_ricopili_format/ && cp %s Ricopili_Dependencies.1118b/1KG_pops_ricopili_format/'
+
+    },
     ]
 
 patches = [
@@ -44,7 +87,8 @@ dependencies = [
     ('R-bundle-ricopili', '2019_Oct_15.001', '', ('gfbf', '2023b')),
     ('ldsc', '2.0.1', '', ('gfbf', '2023b')),
     ('plink', '1.90b7.2', '', SYSTEM),
-    ('texlive', '20240312', '', ('GCC', '13.2.0'))
+    ('texlive', '20240312', '', ('GCC', '13.2.0')),
+    ('EIGENSOFT', '8.0.0', '', ('gfbf', '2023b'))
 ]
 
 sanity_check_paths = {

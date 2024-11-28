@@ -145,9 +145,18 @@ index 4de54c8..393e064 100755
  read.table ("LEGENDFILE2",header=F,sep ="\t")->le2
  
 diff --git a/rp_bin/plothist2 b/rp_bin/plothist2
-index ac0b93c..a782e28 100755
+index ac0b93c..f99a8cb 100755
 --- a/rp_bin/plothist2
 +++ b/rp_bin/plothist2
+@@ -83,7 +83,7 @@ GetOptions(
+     "help"=> \my $help,
+     "var"=> \my $var_sw,
+     "thresh=s"=> \$thresh,
+-#    "xlim=s"=> \$xlim,
++    "xlim=s"=> \$xlim,
+     "out=s"=> \$out,
+     "rloc=s"=> \$rloc,
+     "debug"=> \my $debug,
 @@ -240,7 +240,7 @@ breaks_n = breaks_n * (range / range_plot);
  #print (range)
  #print (range_plot)
