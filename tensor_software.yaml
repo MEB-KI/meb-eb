@@ -46,6 +46,7 @@ easyconfigs:
   - ldsc-2.0.1-gfbf-2023b.eb
   - gtc2vcf-2023-12-06-GCC-13.2.0.eb
   - regenie-3.4.1.eb
+  - ricopili-2019_Oct_15.001.eb
   
   # general tools
   - ncdu-1.19-GCCcore-13.2.0.eb
@@ -55,3 +56,4 @@ easyconfigs:
   - nextflow-23.10.1.eb
   - lftp-4.9.2-GCCcore-13.2.0.eb
   - mebauth-0.1.eb
+  - texlive-20240312-GCC-13.2.0.eb
