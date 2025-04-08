@@ -61,6 +61,6 @@ easyconfigs:
   - parallel-20240122-GCCcore-13.2.0.eb
   - nextflow-23.10.1.eb
   - lftp-4.9.2-GCCcore-13.2.0.eb
-  - mebauth-0.1.eb
+  - mebauth-0.2.eb
   - texlive-20240312-GCC-13.2.0.eb
   - Java-21.eb

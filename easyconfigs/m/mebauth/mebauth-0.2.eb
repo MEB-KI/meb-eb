@@ -1,0 +1,38 @@
+easyblock = 'Binary'
+
+name = 'mebauth'
+version = '0.2'
+
+homepage = 'https://www.meb.ki.se/sites/meb-it-internal/computing-resources-at-meb/'
+description = """Authenticate with MEB AD to access drives P, Z, and the kosmos SQL server.
+
+This module must be loaded interactively the first time you use it. It will 
+prompt you for your MEB password and store it in a secure location.
+
+After this you can load the module in batch jobs, and it will use the stored
+password to create a new kerberos ticket, which is kept valid for the duration
+of the job.
+
+When you change your MEB AD password, you will need to unload and
+reload the module to update the stored password."""
+
+toolchain = SYSTEM
+
+source_urls = []
+sources = ['keytab_k5start-%(version)s.sh', 'k5stop-%(version)s.sh']
+checksums = []
+
+sanity_check_paths = {
+    'files': ['keytab_k5start-%(version)s.sh', 'k5stop-%(version)s.sh'],
+    'dirs': [],
+}
+
+modluafooter = """
+-- run script to make sure we have a kerberos keytab and ticket
+execute{cmd = "keytab_k5start-%(version)s.sh", modeA = {"load"}}
+-- if we are unloading the module, kill k5start started by loading the module
+execute{cmd = root .. "/k5stop-%(version)s.sh", modeA = {"unload"}}
+
+"""
+
+moduleclass = 'tools'
