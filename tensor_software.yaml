@@ -39,25 +39,36 @@ easyconfigs:
   - qctool-2.2.0-GCC-13.2.0.eb
   - snptest-2.5.6.eb
   - gcta-1.94.1.eb
+  - gcta-1.94.4.eb
   - plink-1.07.eb
   - plink-1.90b7.1.eb
+  - plink-1.9.0-b.7.7.eb
   - plink2-2.00a5.10.eb
+  - plink2-2.0.0-a.5.24.eb
+  - plink2-2.0.0-a.6.12.eb
   - metal-2011-03-25-GCC-13.2.0.eb
   - metal-2020-05-05-GCC-13.2.0.eb
   - EIGENSOFT-8.0.0-gfbf-2023b.eb
   - bedtools-2.31.1-GCC-13.2.0.eb
   - htslib-1.19.1-GCC-13.2.0.eb
+  - htslib-1.21-GCC-13.2.0.eb
   - bcftools-1.19-GCC-13.2.0.eb
+  - bcftools-1.21-GCC-13.2.0.eb
   - samtools-1.19.2-GCC-13.2.0.eb
+  - samtools-1.21-GCC-13.2.0.eb
   - ldsc-2.0.1-gfbf-2023b.eb
   - gtc2vcf-2023-12-06-GCC-13.2.0.eb
+  - gtc2vcf-2025-01-03-GCC-13.2.0.eb
   - regenie-3.4.1.eb
+  - regenie-4.1.eb
   - ricopili-2019_Oct_15.001.eb
   
   # general tools
   - ncdu-1.19-GCCcore-13.2.0.eb
   - tmux-3.3a-GCCcore-13.2.0.eb
+  - tmux-3.5a-GCCcore-13.2.0.eb
   - rclone-1.65.2.eb
+  - rclone-1.69.2.eb
   - parallel-20240122-GCCcore-13.2.0.eb
   - nextflow-23.10.1.eb
   - lftp-4.9.2-GCCcore-13.2.0.eb

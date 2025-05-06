@@ -1,0 +1,33 @@
+easyblock = 'PackedBinary'
+
+name = "regenie"
+version = "4.1"
+
+homepage = "https://rgcgithub.github.io/regenie/"
+description = """regenie is a C++ program for whole genome regression modelling
+of large genome-wide association studies."""
+
+toolchain = SYSTEM
+
+github_account = "rgcgithub"
+
+source_urls = ['https://github.com/%(github_account)s/%(namelower)s/releases/download/v%(version)s/']
+# Now using "ubuntu20" version which seems compatible with RHEL9 
+# (the previously used Centos7 version is not being built any more)
+sources = ['%(namelower)s_v%(version)s.gz_x86_64_ubuntu20_mkl.zip']
+
+dependencies = [
+]
+
+postinstallcmds = ['cd %(installdir)s && ln -s %(namelower)s_v%(version)s.gz_x86_64_ubuntu20_mkl regenie']
+
+sanity_check_paths = {
+    'files': ['regenie'],
+    'dirs': []
+}
+
+sanity_check_commands = [
+    'regenie --help'
+]
+
+moduleclass = 'bio'

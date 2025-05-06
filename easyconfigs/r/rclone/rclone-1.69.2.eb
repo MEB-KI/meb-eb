@@ -1,0 +1,34 @@
+easyblock = 'MakeCp'
+
+name = 'rclone'
+version = '1.69.2'
+
+homepage = 'https://rclone.org/'
+
+description = """
+ Rclone is a command line program to sync files and directories to and from
+ a variety of online storage services
+"""
+
+toolchain = SYSTEM
+
+source_urls = ['https://downloads.%(name)s.org/v%(version)s/']
+sources = ['%(name)s-v%(version)s-linux-amd64.zip']
+checksums = ['14aaed7163df57894c96f8aca94757f19065f9cb3cb8a84ff9c33234271e1d69']
+
+skipsteps = ['build']
+
+files_to_copy = [
+    (['rclone'], 'bin'),
+    (['rclone.1'], 'share/man/man1'),
+    (['README.*'], 'share/doc'),
+]
+
+sanity_check_paths = {
+    'files': ['bin/rclone', 'share/doc/README.txt', 'share/man/man1/rclone.1'],
+    'dirs': []
+}
+
+sanity_check_commands = ['rclone --version']
+
+moduleclass = 'tools'

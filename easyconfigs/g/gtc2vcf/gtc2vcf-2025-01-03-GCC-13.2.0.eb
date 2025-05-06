@@ -1,0 +1,67 @@
+easyblock = 'MakeCp'
+
+name = 'gtc2vcf'
+version = '2025-01-03'
+local_commit = '33f9900'
+local_bcftools_version = '1.21'
+
+homepage = 'https://software.broadinstitute.org/software/gtc2vcf/'
+description = """gtc2vcf is a free software tool released under the MIT license 
+for rapidly converting DNA microarray data from Illumina or Affymetrix in
+standard VCF files.
+
+gtc2vcf can read Illumina IDAT, BPM, EGT, and GTC binary files and Affymetrix 
+CEL and CHP binary files
+
+gtc2vcf is entirely written in C as a BCFtools plugin."""
+
+toolchain = {'name': 'GCC', 'version': '13.2.0'}
+toolchainopts = {'pic': True}
+
+# also getting bcftools sources required for building
+github_account = 'freeseek'
+source_urls = [
+    GITHUB_SOURCE,
+    'https://github.com/samtools/bcftools/releases/download/%s' % local_bcftools_version,
+    ]
+sources = [
+    # get bcftools first
+    {'filename': 'bcftools-%s.tar.bz2' % local_bcftools_version,
+     # extract in builddir root
+     'extract_cmd': 'tar --strip-components=1 -xvjf %s'},
+    {'download_filename': '%s.tar.gz' % local_commit, 'filename': SOURCE_TAR_GZ,
+     # extract gtc2vcf in bcftools plugins folder
+     'extract_cmd': 'tar -C plugins --strip-components=1 -xvzf %s'},
+    ]
+
+
+dependencies = [
+    ('bcftools', local_bcftools_version),
+]
+
+# do run ./configure
+with_configure = True
+configopts = "--with-htslib=$EBROOTHTSLIB --enable-libgsl --enable-perl-filters"
+
+build_cmd_targets = "plugins"
+
+files_to_copy = [
+    'plugins/gtc2vcf.so',
+    'plugins/affy2vcf.so',
+    'plugins/README.md',
+    'plugins/LICENSE',
+]
+
+sanity_check_paths = {
+    'files': ['gtc2vcf.so', 'affy2vcf.so'],
+    'dirs': [''],
+}
+
+modluafooter = """
+prepend_path("BCFTOOLS_PLUGINS", "%(installdir)s")
+"""
+
+moduleclass = 'bio'
+
+
+

@@ -6,6 +6,7 @@ set -eu
 # by default (can be overridden by specifying --memory and --threads)
 #
 # Robert Karlsson <robert.karlsson@ki.se>
+# 2025-04-29 - use exec
 # 2019-12-04 - call plink in the same path as this script instead of hardcoded
 # 2016-11-22 - first version
 
@@ -25,4 +26,4 @@ if [[ "$#" -gt 0 && ! "$*" =~ "--help" ]]; then
     done
 fi
 
-"$PLINK" "$@"
+exec "$PLINK" "$@"

@@ -6,6 +6,7 @@ set -eu
 # by default (can be overridden by specifying --memory and --threads)
 #
 # Robert Karlsson <robert.karlsson@ki.se>
+# 2025-04-29 - use exec
 # 2023-10-31 - use AMD builds on AMD AVX2 CPUs
 # 2019-02-04 - choose appropriate version by CPU capabilities
 # 2018-09-18 - first version
@@ -37,4 +38,4 @@ if [[ "$#" -gt 0 && ! "$*" =~ "--help" ]]; then
     done
 fi
 
-"$PLINK2" "$@"
+exec "$PLINK2" "$@"

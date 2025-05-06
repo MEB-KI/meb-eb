@@ -1,0 +1,33 @@
+easyblock = 'ConfigureMake'
+
+name = 'htslib'
+version = '1.21'
+
+homepage = 'https://www.htslib.org/'
+description = """A C library for reading/writing high-throughput sequencing data.
+ This package includes the utilities bgzip and tabix"""
+
+toolchain = {'name': 'GCC', 'version': '13.2.0'}
+toolchainopts = {'pic': True}
+
+source_urls = ['https://github.com/samtools/%(namelower)s/releases/download/%(version)s/']
+sources = [SOURCELOWER_TAR_BZ2]
+checksums = ['84b510e735f4963641f26fd88c8abdee81ff4cb62168310ae716636aac0f1823']
+
+# cURL added for S3 support
+dependencies = [
+    ('zlib', '1.2.13'),
+    ('bzip2', '1.0.8'),
+    ('XZ', '5.4.4'),
+    ('libdeflate', '1.19'),
+    ('cURL', '8.3.0'),
+    ('OpenSSL', '1.1', '', SYSTEM),
+]
+
+
+sanity_check_paths = {
+    'files': ['bin/bgzip', 'bin/tabix', 'lib/libhts.%s' % SHLIB_EXT],
+    'dirs': [],
+}
+
+moduleclass = 'bio'

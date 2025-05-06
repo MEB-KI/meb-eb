@@ -1,0 +1,47 @@
+easyblock = 'PackedBinary'
+
+name = 'plink2'
+version = '2.0.0-a.5.24'
+
+homepage = 'https://www.cog-genomics.org/plink/2.0/'
+description = """PLINK is a free, open-source whole genome association analysis toolset,
+designed to perform a range of basic, large-scale analyses in a computationally
+efficient manner."""
+
+toolchain = SYSTEM
+
+source_urls = ['https://www.cog-genomics.org/static/bin/']
+sources = [{
+    'filename': 'plink%(version)s_linux_amd_avx2.zip',
+    'extract_cmd': 'unzip -qq %s && mv plink2 plink2.bin.amd'
+},
+{
+    'filename': 'plink%(version)s_linux_avx2.zip',
+    'extract_cmd': 'unzip -n -qq %s && mv plink2 plink2.bin'
+},
+{
+    'filename': 'plink%(version)s_linux_x86_64.zip',
+    'extract_cmd': 'unzip -n -qq %s && mv plink2 plink2.bin.x86_64'
+}]
+patches = [
+	('plink2-wrapper.sh', '.')
+]
+checksums = [
+    {'plink2.0.0-a.5.24_linux_amd_avx2.zip': '211cea004643b5e2c26f898415ff500dca1391d9eb3e6e49c9dd42557fe7d05b'},
+    {'plink2.0.0-a.5.24_linux_avx2.zip': '5115ade720c72d0e32d00ecfbe2ce379b8433da4fa64e11168896122d75a6dd3'},
+    {'plink2.0.0-a.5.24_linux_x86_64.zip': '25be4d0c105ef9e4f9c5bcff68ffbea3e10913ba44f67b58fd0490d1ef7220ae'},
+]
+
+postinstallcmds = ['mv %(installdir)s/plink2-wrapper.sh %(installdir)s/plink2']
+
+sanity_check_paths = {
+	'files': ['plink2', 'plink2.bin.amd', 'plink2.bin', 'plink2.bin.x86_64'],
+	'dirs': [],
+}
+
+sanity_check_commands = [
+    'plink2 --version'
+]
+
+moduleclass = 'bio'
+
