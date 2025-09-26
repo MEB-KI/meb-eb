@@ -1,0 +1,116 @@
+name = 'R'
+version = '4.5.1'
+
+homepage = 'https://www.r-project.org/'
+description = """R is a free software environment for statistical computing
+ and graphics."""
+
+toolchain = {'name': 'gfbf', 'version': '2023b'}
+
+source_urls = ['https://cloud.r-project.org/src/base/R-%(version_major)s']
+sources = [SOURCE_TAR_GZ]
+checksums = ['b42a7921400386645b10105b91c68728787db5c4c83c9f6c30acdce632e1bb70']
+
+# Add Rprofile.site and Renviron.site
+# Patch parallel::detectCores() to a SLURM-aware version
+patches = [
+    ('%(name)s-%(version)s-Rprofile.site', 'etc/'),
+    ('%(name)s-%(version)s-Renviron.site', 'etc/'),
+    ('R-4.4.3.fix_detectcores.patch')
+]
+
+# disable R's automatic loading and saving of workspaces
+modaliases = {
+    'R': 'R --no-save --no-restore-data'
+}
+
+# set OMP_NUM_THREADS to 1 by default IN THE MODULE FILE
+# (it seems to be too late for FlexiBLAS to set it in Renviron.site)
+modextravars = {
+    'OMP_NUM_THREADS': '1'
+}
+
+postinstallcmds = [
+    'mv %(builddir)s/%(name)s-%(version)s/etc/%(name)s-%(version)s-Rprofile.site %(installdir)s/lib64/R/etc/Rprofile.site',
+    'mv %(builddir)s/%(name)s-%(version)s/etc/%(name)s-%(version)s-Renviron.site %(installdir)s/lib64/R/etc/Renviron.site'
+    ]
+
+builddependencies = [
+    ('pkgconf', '2.0.3'),
+    ('Autotools', '20220317'),
+]
+dependencies = [
+    ('X11', '20231019'),
+    ('Mesa', '23.1.9'),
+    ('libGLU', '9.0.3'),
+    ('cairo', '1.18.0'),
+    ('libreadline', '8.2'),
+    ('ncurses', '6.4'),
+    ('bzip2', '1.0.8'),
+    ('XZ', '5.4.4'),
+    ('zlib', '1.2.13'),
+    ('SQLite', '3.43.1'),
+    ('PCRE2', '10.42'),
+    ('libpng', '1.6.40'),  # for plotting in R
+    ('libjpeg-turbo', '3.0.1'),  # for plottting in R
+    ('LibTIFF', '4.6.0'),
+    ('Java', '21', '', SYSTEM),
+    ('libgit2', '1.7.1'),
+    ('OpenSSL', '1.1', '', SYSTEM),
+    ('cURL', '8.3.0'),
+    ('Tk', '8.6.13'),  # for tcltk
+    ('libxml2', '2.11.5'),  # for XML
+    ('HarfBuzz', '8.2.2'),  # for textshaping
+    ('FriBidi', '1.0.13'),  # for textshaping
+    ('Pango', '1.51.0'), # for using cairo graphics by default
+    ('unixODBC', '2.3.12'), # for obdc connections
+    ('pandoc', '3.1.13', '', SYSTEM),
+    ('netCDF', '4.9.2'),
+    ('GMP', '6.3.0'),
+    ('CMake', '3.27.6'),
+    
+]
+
+# Some R extensions (mclust, quantreg, waveslim for example) require the math library (-lm) to avoid undefined symbols.
+# Adding it to FLIBS makes sure it is present when needed.
+preconfigopts = 'export FLIBS="$FLIBS -lm" && '
+
+configopts = "--with-pic --enable-threads --enable-R-shlib"
+# some recommended packages may fail in a parallel build (e.g. Matrix), and
+# we're installing them anyway below
+configopts += " --with-recommended-packages=no"
+
+# run built-in tests ("make check-all" for more extensive tests, but requires texlive)
+test_cmd = "make check"
+
+# specify that at least EasyBuild v3.5.0 is required,
+# since we rely on the updated easyblock for R to configure correctly w.r.t. BLAS/LAPACK
+easybuild_version = '3.5.0'
+
+exts_default_options = {
+    'source_urls': [
+        'https://cloud.r-project.org/src/contrib/Archive/%(name)s',  # package archive
+        'https://cloud.r-project.org/src/contrib/',  # current version of packages
+    ],
+    'source_tmpl': '%(name)s_%(version)s.tar.gz',
+}
+
+# !! order of packages is important !!
+exts_list = [
+    'base',
+    'compiler',
+    'datasets',
+    'graphics',
+    'grDevices',
+    'grid',
+    'methods',
+    'parallel',
+    'splines',
+    'stats',
+    'stats4',
+    'tcltk',
+    'tools',
+    'utils',
+]
+
+moduleclass = 'lang'
