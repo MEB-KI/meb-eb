@@ -38,6 +38,9 @@ easyconfigs:
   - rstudio-2025.09.0.eb:
       options:
         read-only-installdir: True
+  - rstudio-2025.09.2.eb:
+      options:
+        read-only-installdir: True
   - Stata-18.eb
   
   # genetics
