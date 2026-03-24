@@ -48,12 +48,13 @@ build_cmd_targets = "plugins"
 files_to_copy = [
     'plugins/gtc2vcf.so',
     'plugins/affy2vcf.so',
+    'plugins/idat2gtc.so',
     'plugins/README.md',
     'plugins/LICENSE',
 ]
 
 sanity_check_paths = {
-    'files': ['gtc2vcf.so', 'affy2vcf.so'],
+    'files': ['gtc2vcf.so', 'affy2vcf.so', 'idat2gtc.so'],
     'dirs': [''],
 }
 
