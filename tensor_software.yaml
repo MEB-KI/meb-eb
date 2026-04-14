@@ -42,6 +42,7 @@ easyconfigs:
       options:
         read-only-installdir: True
   - Stata-18.eb
+  - JAGS-4.3.2-gfbf-2023b.eb
   
   # genetics
   - gtool-0.7.5.eb
