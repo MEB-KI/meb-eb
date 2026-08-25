@@ -1,0 +1,6 @@
+# MEB Rprofile.site
+
+### Set a _HTTPS_ CRAN mirror
+local({r <- getOption("repos")
+       r["CRAN"] <- "https://cloud.r-project.org"
+       options(repos = r)})
